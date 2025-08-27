@@ -2,8 +2,9 @@
 ///////// Global definitions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let testRange = document.getElementById("frequencySlider");
-
+// let testRange = document.getElementById("frequencySlider");
+const delayFeedbackInput = document.getElementById("delayFeedbaclInput");
+const meterOutput = document.getElementById("meterOutput");
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////// Intro Modal popup
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +80,17 @@ function changeAmpAttack(newRelease) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////// Delay Functions
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function changeDelayFeedback(newFeedbackAmt) {
+  delay.feedback.value = newFeedbackAmt;
+}
+
+delayFeedbackInput.addEventListener("change", (e) => {
+  let newValue = e.target.value;
+  changeDelayFeedback(newValue);
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////// Distortion Functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,8 +101,8 @@ function changeDistortionAmount(newDistAmt) {
   }
 }
 
-function toggleDistortion(distortionOn){
-  if(distortionOn){
+function toggleDistortion(distortionOn) {
+  if (distortionOn) {
     distortion.wet.value = 1;
   } else {
     distortion.wet.value = 0;
@@ -109,8 +121,8 @@ function changeReverbDecay(newVerbDecayAmt) {
   reverb.set({ decay: newVerbDecayAmt });
 }
 
-function toggleReverb(verbOn){
-  if(verbOn){
+function toggleReverb(verbOn) {
+  if (verbOn) {
     reverb.wet.value = 1;
   } else {
     reverb.wet.value = 0;
@@ -148,6 +160,27 @@ function changeFilterQ(newFilterQ) {
     filter.Q.value = newFilterQ;
   }
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////// Meter
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+setInterval(checkMeter, 500);
+
+function checkMeter() {
+  let meterValue = meter.getValue();
+  let clampedValue = clamp(meterValue, -80, 0);
+  console.log(meterValue);
+  let remappedValue = remapRange(meterValue, -80, 0, 0, 1);
+  meterOutput.textContent = remappedValue;
+  let colorRange = Math.floor(remappedValue * 100);
+  if (remappedValue < 0.1) {
+    // do something
+  } else if (remappedValue < 0.5) {
+    // do something
+  } else {
+  }
+
+  document.body.style.backgroundColor = `color-mix(in hsl, red, blue ${remappedValue}%)`;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////// Connections
@@ -155,5 +188,5 @@ function changeFilterQ(newFilterQ) {
 
 testRange.addEventListener("input", (e) => {
   let rangeValue = e.target.value;
-  chnageFilterFreq(rangeValue);
+  changeFilterFreq(rangeValue);
 });
